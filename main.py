@@ -1,3 +1,4 @@
+import tkinter.messagebox
 from tkinter import *
 from PIL import ImageTk, Image
 import cryptocode
@@ -11,21 +12,28 @@ def save_encrypt():
     title = title_entry.get()
     our_file = open("secret.txt", "a")
     note = secret_text.get("1.0", END)
-    encoded = cryptocode.encrypt(message=note, password=master_key_entry.get())
-    our_file.write(f"{title}\n{encoded}\n")
-    our_file.close()
-    title_entry.delete(0, END)
-    secret_text.delete("1.0", END)
-    master_key_entry.delete(0, END)
+    if len(secret_text.get("1.0", END)) == 1:
+        tkinter.messagebox.showwarning("Text", "Enter Your Text")
+    elif len(master_key_entry.get()) == 0:
+        tkinter.messagebox.showwarning("Password","Pleas Enter Password")
+    else:
+        encoded = cryptocode.encrypt(message=note, password=master_key_entry.get())
+        our_file.write(f"{title}\n{encoded}\n")
+        our_file.close()
+        title_entry.delete(0, END)
+        secret_text.delete("1.0", END)
+        master_key_entry.delete(0, END)
 
 
 def decrypt_function():
-    try:
-        decoded = cryptocode.decrypt(secret_text.get("1.0", END), password=master_key_entry.get())
+    decoded = cryptocode.decrypt(secret_text.get("1.0", END), password=master_key_entry.get())
+    if len(secret_text.get("1.0", END)) == 1 or master_key_entry.get() == "":
+        tkinter.messagebox.showwarning("Warning", "Pleas Enter All Information")
+    elif not decoded:
+        tkinter.messagebox.showerror("Something Wrong", "Check Password Or Encrypted Info")
+    else:
         secret_text.delete("1.0", END)
         secret_text.insert(INSERT, decoded)
-    except:
-        pass
 
 
 # Image Part
